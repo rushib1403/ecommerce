@@ -16,7 +16,7 @@ import os
 from django.views.decorators.csrf import csrf_exempt
 from PayTm import Checksum
 from .models import *
-MERCHANT_KEY = '43@KVFFXcKDRsuod'
+MERCHANT_KEY = ''
 import time
 from django.utils import timezone
 
