@@ -1,0 +1,133 @@
+{% extends 'shop/main.html' %}
+{% load static %}
+{% block content %}
+<div class="x col-lg-10">
+<div class="row">
+   <div class="col-lg-6">
+     <div class="box-element" id="form-wrapper">
+       <form id="form" method="get" action="/processorder" >
+
+         <div id="shipping-info">
+           <hr>
+           <p>Shipping Information:</p>
+           <hr>
+           <div class="form-field">
+             <input class="form-control" type="text" name="address" placeholder="Address..">
+           </div>
+           <div class="form-field">
+             <input class="form-control" type="text" name="city" placeholder="City..">
+           </div>
+           <div class="form-field">
+             <input class="form-control" type="text" name="state" placeholder="State..">
+           </div>
+           <div class="form-field">
+             <input class="form-control" type="text" name="zipcode" placeholder="Zip code..">
+           </div>
+           <div class="form-field">
+             <input class="form-control" type="text" name="country" placeholder="Zip code..">
+           </div>
+           <div class="form-field">
+            <input class="form-control" onchange=loadDoc(this.value) id="discount" type="text" name="discount" placeholder="Coupon code(optional)">
+          </div>
+          <b id="disadd"></b>
+         </div>
+
+         <hr>
+         <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
+       </form>
+     </div>
+
+     <br>
+     <div class="box-element hidden" id="payment-info">
+       <small >Paypal Options</small>
+        <div id="paypal-button-container"></div>
+      <!-- <button  id="make-payment"  name="button">Make payment</button>-->
+
+     </div>
+
+   </div>
+
+   <div class="col-lg-6">
+     <div class="box-element">
+       <a  class="btn btn-outline-dark" href="/cart">&#x2190; Back to Cart</a>
+       <hr>
+       <h3>Order Summary</h3>
+       <hr>
+            {% if user.is_authenticated %}
+       {% for i in items %}
+
+       <div class="cart-row">
+         <div style="flex:2"><a href="#"><img class="row-image" src="{{i.product.imageURL}}"></a></div>
+         <div style="flex:2"><p>{{i.product.name}}</p></div>
+         <div style="flex:1"><p>${{i.product.price}}</p></div>
+         <div style="flex:1"><p>{{i.quantity}}</p></div>
+       </div>
+       {% endfor %}
+       {% endif %}
+       {% if user.is_anonymous %}
+       {% for i,j,k in items %}
+       <div class="cart-row">
+         <div style="flex:2"><a href="#"><img class="row-image" src="{{i.imageURL}}"></a></div>
+         <div style="flex:2"><p>{{i.name}}</p></div>
+         <div style="flex:1"><p>${{i.price}}</p></div>
+         <div style="flex:1"><p>{{k}}</p></div>
+       </div>
+       {% endfor %}
+       {% endif %}
+       <h5>Items:  {{order.get_cart_items}}</h5>
+       <h5 id="ohh">Total:   ${{order.get_cart_total}}</h5>
+     </div>
+   </div>
+</div>
+</div>
+
+<script>
+
+function loadDoc(e) {
+  var xhttp = new XMLHttpRequest();
+
+var price='{{order.get_cart_total}}'
+ var url='/checkcoupon?code=' + e ;
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+    console.log(this.responseText);
+ if(this.responseText=='False'){
+
+  document.getElementById('disadd').innerHTML='Invalid';
+document.getElementById('disadd').style.color="Red";
+document.getElementById('discount').style.borderColor="red";
+document.getElementById('ohh').innerHTML=`Total:${price}`
+ }
+
+
+ else{
+
+var dict1=JSON.parse(this.responseText);
+
+
+var price2=parseInt(price)
+var price3=price2-(dict1.value*price2)/100
+
+console.log(price3)
+  document.getElementById('disadd').innerHTML="verified";
+document.getElementById('disadd').style.color="green";
+document.getElementById('discount').style.borderColor="green";
+document.getElementById('ohh').innerHTML=`Total Discounted Price: ${price3}`;
+
+
+
+ 
+ }
+
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.send();
+}
+
+
+
+</script>
+
+
+{% endblock content%}

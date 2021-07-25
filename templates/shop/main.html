@@ -1,0 +1,516 @@
+{% load static %}
+{% load ratings %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css" integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+
+
+    <link rel="stylesheet" href="static/css/main.css">
+    <style>
+      .navlink a:hover{
+        color:yellow;
+      }
+    </style>
+
+    <link rel="stylesheet"
+          href=
+"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+  <script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+<script>
+  var user='{{request.user}}'
+  var email='{{request.user.email}}'
+
+</script>
+<style>
+* {box-sizing: border-box;}
+
+.img-zoom-container {
+  position: relative;
+  display: flex;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.img-zoom-lens {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  /*set the size of the lens:*/
+  width: 150px;
+  height: 150px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.img-zoom-result {
+  border: 1px solid #d4d4d4;
+  /*set the size of the result div:*/
+  width: 700px;
+  height: 600px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+.cart-row  a:hover img {
+        transform: scale(1.5);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+/* input icon seah styling */
+.input-icons i {
+          position: absolute;
+      }
+
+      .input-icons {
+          width: 100%;
+          margin-bottom: 10px;
+      }
+
+      .icon {
+          padding: 10px;
+          min-width: 40px;
+      }
+
+
+        .input-field {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    padding-left: 84px;
+    padding-right: 127px;
+    padding-top: 11px;
+}
+element.style {
+    max-width: 400px;
+    margin-left: 325px;
+}
+
+</style>
+<script>
+function imageZoom(imgID, resultID) {
+  var img, lens, result, cx, cy;
+  img = document.getElementById(imgID);
+  result = document.getElementById(resultID);
+  /*create lens:*/
+  lens = document.createElement("DIV");
+  lens.setAttribute("class", "img-zoom-lens");
+  /*insert lens:*/
+  img.parentElement.insertBefore(lens, img);
+  /*calculate the ratio between result DIV and lens:*/
+  cx = result.offsetWidth / lens.offsetWidth;
+  cy = result.offsetHeight / lens.offsetHeight;
+  /*set background properties for the result DIV:*/
+  result.style.backgroundImage = "url('" + img.src + "')";
+  result.style.backgroundSize = (img.width * cx) + "px " + (img.height * cy) + "px";
+  /*execute a function when someone moves the cursor over the image, or the lens:*/
+  lens.addEventListener("mousemove", moveLens);
+  img.addEventListener("mousemove", moveLens);
+  /*and also for touch screens:*/
+  lens.addEventListener("touchmove", moveLens);
+  img.addEventListener("touchmove", moveLens);
+  function moveLens(e) {
+    var pos, x, y;
+    /*prevent any other actions that may occur when moving over the image:*/
+    e.preventDefault();
+    /*get the cursor's x and y positions:*/
+    pos = getCursorPos(e);
+    /*calculate the position of the lens:*/
+    x = pos.x - (lens.offsetWidth / 2);
+    y = pos.y - (lens.offsetHeight / 2);
+    /*prevent the lens from being positioned outside the image:*/
+    if (x > img.width - lens.offsetWidth) {x = img.width - lens.offsetWidth;}
+    if (x < 0) {x = 0;}
+    if (y > img.height - lens.offsetHeight) {y = img.height - lens.offsetHeight;}
+    if (y < 0) {y = 0;}
+    /*set the position of the lens:*/
+    lens.style.left = x + "px";
+    lens.style.top = y + "px";
+    /*display what the lens "sees":*/
+    result.style.backgroundPosition = "-" + (x * cx) + "px -" + (y * cy) + "px";
+  }
+  function getCursorPos(e) {
+    var a, x = 0, y = 0;
+    e = e || window.event;
+    /*get the x and y positions of the image:*/
+    a = img.getBoundingClientRect();
+    /*calculate the cursor's x and y coordinates, relative to the image:*/
+    x = e.pageX - a.left;
+    y = e.pageY - a.top;
+    /*consider any page scrolling:*/
+    x = x - window.pageXOffset;
+    y = y - window.pageYOffset;
+    return {x : x, y : y};
+  }
+}
+</script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" style="margin-top: -16px;
+    font-size: 26px;" href="/">Ecom</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/">Store<span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active">
+          <a class="nav-link" href="/contact">Contact</a>
+        </li>
+
+
+
+<li>
+
+
+
+  
+</li>
+
+
+
+
+
+
+
+
+
+
+
+        <li>
+        <div class="nav-item active" style="max-width:400px;margin-left:357px;">
+                <div class="input-icons">
+                    <i class="fa fa-user icon"></i>
+                    <input class="input-field" style="color:green;font-weight:bold;" oninput="papa()" placeholder="Search your Product..." id="dada" type="text">
+                </div>
+          </div> </li>
+              </ul>
+
+
+          
+          <div class="form-inline my-2 my-lg-0">
+
+
+            
+
+
+
+
+
+                {% if user.is_authenticated %}
+
+                <ul class="navbar-nav ml-2">
+                  <li class="nav-item dropdown">
+
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">  Welcome {{request.user}}</a>
+
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="/logout">Logout</a>
+                  <a class="dropdown-item" href="/exam">Notifications</a>
+
+            </li>
+
+                </ul>
+
+                   {% else %}
+                <button type="button" class="btn btn-warning mr-2" data-toggle="modal" data-target="#signupmodal">
+                  Signup
+                </button>
+                <button type="button" class="btn btn-warning mr-2" data-toggle="modal" data-target="#loginmodal">
+                Login
+                </button>
+
+
+
+                {% endif %}
+
+
+
+         	     	<a href="/cart">
+         	    		<img  id="cart-icon" src="{% static 'cart.png' %}">
+         	    	</a>
+         	    	<p id="cart-total">{{cartitems}}</p>
+         	    </div>
+      </div>
+    </nav>
+    {% for message in messages %}
+      <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+      <strong>message:</strong> {{message}}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+<!-- sidebar -->
+<!-- Sidebar -->
+<div class="row ">
+
+
+<div class="bg-light border-right col-lg-2" style="font-weight:  bold;box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);position: sticky;top: 0;" id="sidebar-wrapper">
+  <!-- <div class="sidebar-heading">Start Bootstrap </div> -->
+  <div class="list-group list-group-flush">
+    <a href="/?nan" class="list-group-item list-group-item-action bg-light">All</a>
+    <a href="/?value=mobiles" class="list-group-item list-group-item-action bg-light">Mobile</a>
+    <a href="/?value=tvs" class="list-group-item list-group-item-action bg-light">Tv</a>
+    <a href="/?value=headphones" class="list-group-item list-group-item-action bg-light">Heaphones</a>
+    <a href="/?value=homeappliences" class="list-group-item list-group-item-action bg-light">Home</a>
+    <a href="/?value=shirts" class="list-group-item list-group-item-action bg-light">Men(Shirts)</a>
+    <a href="/?value=ornaments" class="list-group-item list-group-item-action bg-light">Ornaments</a>
+    <a href="/?value=womenwear" class="list-group-item list-group-item-action bg-light">Womenwear</a>
+    <a href="/?value=footwear" class="list-group-item list-group-item-action bg-light">Mens(Footwear)</a>
+    <a href="/prevorder2" class="list-group-item list-group-item-action bg-light">Your order Status</a>
+    <a href="/categorywise_all" class="list-group-item list-group-item-action bg-light">All(Categorywise)</a>
+    <a class="list-group-item list-group-item-action bg-light"   id="notification" href="/exam">Notifications</a>
+    {% if user.is_superuser %}
+    <a href="/adminpanel" class="list-group-item list-group-item-action bg-light text-danger ">Admin</a>
+    
+
+    {% elif user.is_staff %}
+    <a href="/adminpanel" class="list-group-item list-group-item-action bg-light text-danger ">Admin</a>
+    {% endif %}
+ 
+ 
+ 
+  </div>
+</div>
+
+
+
+
+<!--   notifiation      -->
+
+
+<!--  notification end  -->
+<!-- <div class="x col-lg-10" id="lala">
+</div> -->
+
+{% block content %}
+
+  {% endblock content %}
+</div>
+<!-- /#sidebar-wrapper -->
+
+<!-- Page Content -->
+
+{% block js %}
+{% endblock js %}
+
+
+
+
+    <!-- signup Modal -->
+    <div class="modal fade" id="signupmodal" tabindex="-1" role="dialog" aria-labelledby="signupmodal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="signupmodaltitle">Signup Here</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <form action="/signup" method="post">
+              {% csrf_token %}
+            <div class="form-group col-md-6">
+          <label for="fname">First name</label>
+          <input type="text" name="fname" class="form-control" placeholder="Firstname" id="fname" required>
+        </div>
+        <div class="form-group col-md-6">
+      <label for="lname">Last name</label>
+      <input type="text" name="lname" placeholder="Lastname" class="form-control" id="lname" required>
+    </div>
+    <div class="form-group col-md-6">
+    <label for="username">Username</label>
+    <input type="text" name="username" placeholder="username" class="form-control" id="username" required>
+    </div>
+    <div class="form-group col-md-6">
+    <label for="email">Email</label>
+    <input type="email" name="email" required placeholder="Email" class="form-control" id="email">
+    </div>
+
+    <div class="form-group col-md-6">
+    <label for="password1">Password</label>
+    <input type="password" required name="password1" placeholder="password" class="form-control" id="password1">
+    </div>
+    <div class="form-group col-md-6">
+    <label for="password2">Confirm Password</label>
+    <input type="password" required name="password2" placeholder="Confirmpassword" class="form-control" id="password2">
+    </div>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+    </form>
+          </div>
+          <div class="modal-footer">
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- login Modal -->
+    <div class="modal fade" id="loginmodal" tabindex="-1" role="dialog" aria-labelledby="loginmodal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loginmodaltitle">Login Here</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+      <form action="/login" method="post">
+        {% csrf_token %}
+    <div class="form-group col-md-6">
+    <label for="username">Username</label>
+    <input type="text" name="username2" required placeholder="username" class="form-control" id="loginusername">
+    </div>
+
+    <div class="form-group col-md-6">
+    <label for="password">Password</label>
+    <input type="password"  name="password" required placeholder="password" class="form-control" id="password">
+    <input type="checkbox" id="hiii" onclick="llla()">Show Password
+
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+    <a href="/reset_password">forgot password?</a>
+    </form>
+          </div>
+          <div class="modal-footer">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+    <!-- JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js" integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J" crossorigin="anonymous"></script>
+<script type="text/javascript">
+function llla(){
+
+
+  var x = document.getElementById("password");
+  if (x.type == "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+
+}
+
+function papa(){
+
+    var i=document.getElementById('dada').value;
+if(i!==""){
+  var i=i.toLowerCase()
+url="/search?i=" + i;
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+if (this.readyState == 4 && this.status == 200) {
+//  window.location.reload();
+var product3=JSON.parse(this.responseText);
+//alert(product3[0]);
+//product4=length(product3)
+
+  document.getElementById('lala').innerHTML="";
+
+for(i=0;i<(product3.length);i++){
+    var k=document.getElementById('dada')
+    //var x=product3[i];
+  //  if (k.value != k.defaultValue){
+//   try{
+//   document.getElementById('product2').style.marginLeft="233px";
+// }
+// catch{
+//   console.log('hii');
+// }
+  // style="display:inline;"
+
+document.getElementById('lala').innerHTML+=
+`
+<div class="row" style="display:inline;" >
+<div id="product2" class="col-lg-4" >
+  <img class="thumbnail" src="${product3[i].image}">
+<div class="box-element product" >
+<h6><strong>${product3[i].name}</strong></h6>
+<button onclick="update(this.id,'add')" id="${product3[i].id}" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+      <a class="btn btn-outline-success" href="/viewprod?value2=${product3[i].id}">View</a>
+      <h4 style="display: inline-block; float: right"><strong>$${product3[i].price}</strong></h4>
+
+
+
+</div>
+</div>
+
+</div>
+
+
+
+
+
+`
+//i=i+1;
+//}
+//document.getElementById('product2').style.marginLeft="233px";
+}
+
+}
+
+};
+xhttp.open("GET", url, true);
+xhttp.send();}
+else{
+location.href='/'
+
+}
+
+
+
+}</script>
+<script src="{% static 'cart.js' %}" charset="utf-8"></script>
+<script>
+  var order = "{{request.user}}"
+  let socket = new WebSocket('ws://localhost:8081/ws/test2/' + order);
+  socket.onopen = function (e) {
+    console.log('Connection established');
+  };
+
+  socket.onmessage = function (e) {
+      console.log(e)
+    var data = JSON.parse(e.data)
+    var value = data.payload.current_notification
+    console.log(value)
+   document.getElementById('notification').innerHTML+="new"
+  };
+  socket.onclose = function (e) {
+    console.log('Connection closed');
+  };
+
+
+!function(a,b){function g(b,c){this.$element=a(b),this.settings=a.extend({},f,c),this.init()}var e="floatlabel",f={slideInput:!0,labelStartTop:"20px",labelEndTop:"10px",paddingOffset:"10px",transitionDuration:.3,transitionEasing:"ease-in-out",labelClass:"",typeMatches:/text|password|email|number|search|url/};g.prototype={init:function(){var a=this,c=this.settings,d=c.transitionDuration,e=c.transitionEasing,f=this.$element,g={"-webkit-transition":"all "+d+"s "+e,"-moz-transition":"all "+d+"s "+e,"-o-transition":"all "+d+"s "+e,"-ms-transition":"all "+d+"s "+e,transition:"all "+d+"s "+e};if("INPUT"===f.prop("tagName").toUpperCase()&&c.typeMatches.test(f.attr("type"))){var h=f.attr("id");h||(h=Math.floor(100*Math.random())+1,f.attr("id",h));var i=f.attr("placeholder"),j=f.data("label"),k=f.data("class");k||(k=""),i&&""!==i||(i="You forgot to add placeholder attribute!"),j&&""!==j||(j=i),this.inputPaddingTop=parseFloat(f.css("padding-top"))+parseFloat(c.paddingOffset),f.wrap('<div class="floatlabel-wrapper" style="position:relative"></div>'),f.before('<label for="'+h+'" class="label-floatlabel '+c.labelClass+" "+k+'">'+j+"</label>"),this.$label=f.prev("label"),this.$label.css({position:"absolute",top:c.labelStartTop,left:f.css("padding-left"),display:"none","-moz-opacity":"0","-khtml-opacity":"0","-webkit-opacity":"0",opacity:"0"}),c.slideInput||f.css({"padding-top":this.inputPaddingTop}),f.on("keyup blur change",function(b){a.checkValue(b)}),b.setTimeout(function(){a.$label.css(g),a.$element.css(g)},100),this.checkValue()}},checkValue:function(a){if(a){var b=a.keyCode||a.which;if(9===b)return}var c=this.$element,d=c.data("flout");""!==c.val()&&c.data("flout","1"),""===c.val()&&c.data("flout","0"),"1"===c.data("flout")&&"1"!==d&&this.showLabel(),"0"===c.data("flout")&&"0"!==d&&this.hideLabel()},showLabel:function(){var a=this;a.$label.css({display:"block"}),b.setTimeout(function(){a.$label.css({top:a.settings.labelEndTop,"-moz-opacity":"1","-khtml-opacity":"1","-webkit-opacity":"1",opacity:"1"}),a.settings.slideInput&&a.$element.css({"padding-top":a.inputPaddingTop}),a.$element.addClass("active-floatlabel")},50)},hideLabel:function(){var a=this;a.$label.css({top:a.settings.labelStartTop,"-moz-opacity":"0","-khtml-opacity":"0","-webkit-opacity":"0",opacity:"0"}),a.settings.slideInput&&a.$element.css({"padding-top":parseFloat(a.inputPaddingTop)-parseFloat(this.settings.paddingOffset)}),a.$element.removeClass("active-floatlabel"),b.setTimeout(function(){a.$label.css({display:"none"})},1e3*a.settings.transitionDuration)}},a.fn[e]=function(b){return this.each(function(){a.data(this,"plugin_"+e)||a.data(this,"plugin_"+e,new g(this,b))})}}(jQuery,window,document);
+
+
+$(document).ready(function(){
+  $('.form-control').floatlabel({
+      labelClass: 'float-label',
+      labelEndTop: 5
+  });
+});  
+
+</script>
+
+  </body>
+</html>

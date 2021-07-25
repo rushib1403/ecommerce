@@ -1,0 +1,23 @@
+{% extends 'shop/main.html' %}
+{% load static %}
+{% block content %}
+
+<div class="x col-lg-10" id="lala">
+<div class="row">
+  {% for i in product %}
+  <div id="product2" class="col-lg-4">
+    <img class="thumbnail" src="{{i.imageURL}}">
+<div class="box-element product">
+  <h6><strong>{{i.name}}</strong></h6>
+  <button onclick="update(this.id,'add')" id="{{i.id}}" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+				<a class="btn btn-outline-success" href="/viewprod?value2={{i.id}}">View</a>
+				<h4 style="display: inline-block; float: right"><strong>${{i.price}}</strong></h4>
+</div>
+{% load ratings %}
+{% ratings i %}
+  </div>
+
+{% endfor %}
+</div>
+</div>
+{% endblock content %}

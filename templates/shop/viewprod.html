@@ -1,0 +1,157 @@
+
+{% extends 'shop/main.html' %}
+{% load static %}
+{% block content %}
+{% load extras %}
+{% load humanize %}
+<div class="x col-lg-10">
+<div class="row">
+  <div class="card" style="width: 18rem;box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);">
+    <img class="card-img-top" src="{{product.image.url}}" alt="Card image cap">
+    <div class="card-body">
+      <h5 class="card-title">{{product.name}}</h5>
+      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      <button  onclick="update(this.id,'add')" id="{{product.id}}" class="btn btn-warning">Add to cart</button>
+    </div>
+  </div>
+<div class="">
+
+
+  <div class="desc" style="margin-left:100px; padding-bottom:10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);    display: inline-block;
+    height: 175px;
+    padding-left: 6px;">
+    {% load ratings %}
+  <b style="color:red">  {% ratings product %}</b>
+  </div>
+  <div  style="text-align:center;height:260px;margin-top:50px;margin-left:100px;padding-top:10px;box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); ">
+<b>What's New?</b>
+<hr style="color:red;">
+<p>Speciality of website is</p>
+<p>its interactive search bar </p>
+<p>and guest can </p>
+<p>also Buy without </p>
+<p>logging in..</p>
+  </div>
+  </div>
+<div class="card" style="margin-left:100px;text-align:center; width: 18rem;box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);">
+<b style="color:green;">What's used in this webapp?</b>
+<p>1.Asp.net</p>
+<p>2.C#</p>
+<p>3.Websockets</p>
+<p>4.Ajax</p>
+<p>5.Javascript</p>
+<p>6.css</p>
+<p>7.Bootstrap</p>
+<p>8.html</p>
+<p>9.Jquery</p>
+<p>10.Sqlite3 Database</p>
+<p>11.Paytm Integration</p>
+</div>
+
+
+
+</div>
+<div class="img-zoom-container">
+  <img id="myimage" src="{{product.image.url}}" width="500" height="340" alt="Girl">
+  <div id="myresult" class="img-zoom-result"></div>
+</div>
+
+<div class="container">
+  <h2>Reviews({{comment.count}})</h2>
+<div class="my-2">
+  {% if user.is_authenticated %}
+  <form action="/postComment" method="post">
+      {% csrf_token %}
+  <div class="form-group">
+      <input type="hidden" name="postsno" value="{{product.id}}">
+<input type="hidden" name="parentsno" value="">
+        <input type="text" class="form-control" name="comment" placeholder="Enter Comment Here">
+  </div>
+  <button type="submit" class="btn btn-primary">Post comment</button>
+  </form>
+{% else %}
+<p>please login to post a comment</p>
+
+{% endif %}
+</div>
+
+{% for comment in comment %}
+
+
+<div class="row my-3 mx-0">
+
+   <div class="col-md-1 mx-0 ">
+<img class-"rounded mx-auto d-block w-100 p-2" src="/media/gallery/admin.png" width="80px" height="80px" alt="user">
+    </div>
+
+    <div class="col-md-11 mx-0"><b> {{comment.user.username}} </b><span class="badge badge-secondary">( {{comment.timestamp|naturaltime}})</span>
+  <div>{{comment.comment}}</div>
+</div>
+</div>
+
+  <div class="reply mx-6">
+    <p>
+{% if user.is_authenticated %}
+  <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#replybox{{comment.sno}}" aria-expanded="false" aria-controls="collapseExample">
+  Reply
+  </button>
+</p>
+<div class="collapse" id="replybox{{comment.sno}}">
+  <div class="card card-body my-2">
+    <form action="/postComment" method="post">
+        {% csrf_token %}
+    <div class="form-group">
+        <input type="hidden" name="postsno" value="{{product.id}}">
+
+          <input type="text" class="form-control" name="comment" placeholder="Enter Comment Here">
+          <input type="hidden" name="parentsno" value={{comment.sno}}>
+    </div>
+    <button type="submit" class="btn btn-primary">Post Reply</button>
+    </form>
+</div>
+
+
+  </div>
+
+<div class="replies  my-3 mx-4">
+  {% for reply in replyDict|get_val:comment.sno %}
+  <div class="row">
+    <div class="col-md-3">
+
+      <img class-"rounded mx-auto d-block w-100 p-2" src="/media/gallery/admin.png" width="60px" height="60px" alt="user">
+
+    </div>
+    <div class="col-md-11 mx-4"><b> {{reply.user.username}} </b><span class="badge badge-secondary">( {{comment.timestamp|naturaltime}})</span>
+
+    </div>
+    <div class="col-md-8 mx-4 my-4"><p> {{reply.comment}}</p>
+  </div>
+
+
+
+   </div>
+  {% endfor %}
+
+
+  {% else %}
+  <p>please login to Reply a comment</p>
+
+  {% endif %}
+
+
+</div>
+
+
+{% endfor %}
+
+
+
+</div>
+
+</div>
+
+<script>
+// Initiate zoom effect:
+imageZoom("myimage", "myresult");
+</script>
+{% endblock content %}
